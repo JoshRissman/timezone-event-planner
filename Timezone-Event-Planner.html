@@ -1,0 +1,155 @@
+<html><head>
+<title>Timezone Planner</title>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+
+<script>
+
+function updateBfromA() {
+  const tzA = document.getElementById('tzA').value;
+  const tzB = document.getElementById('tzB').value;
+  const dayA = parseInt(document.getElementById('dayA').value);
+  const timeA = parseInt(document.getElementById('timeA').value);
+
+  // Create DateTime from base (e.g., Sunday 00:00 UTC)
+  const minutes = timeA % 60;
+  const hours = Math.floor(timeA / 60);
+  
+  const dtA = luxon.DateTime.fromObject({
+    weekday: dayA === 0 ? 7 : dayA, // Luxon: 1 = Monday ... 7 = Sunday, so force the first slider value to be sunday
+    hour: hours,
+    minute: minutes
+  }, { zone: tzA });
+
+  // Convert to timezone B
+  const dtB = dtA.setZone(tzB);
+
+  // Update sliders for B
+  document.getElementById('dayB').value = (dtB.weekday % 7); // 0–6
+  document.getElementById('timeB').value = dtB.hour * 60 + dtB.minute;
+
+  // Update display
+  document.getElementById('displayDayA').innerText = dtA.toFormat(" cccc ");
+  document.getElementById('displayDayB').innerText = dtB.toFormat(" cccc ");
+
+  document.getElementById('timeAInput').value = `${String(dtA.hour).padStart(2, '0')}:${String(dtB.minute).padStart(2, '0')}`;
+  document.getElementById('timeBInput').value = `${String(dtB.hour).padStart(2, '0')}:${String(dtB.minute).padStart(2, '0')}`;
+
+  document.getElementById('displaytzA').innerText = " (" + tzA + ")";
+  document.getElementById('displaytzB').innerText = " (" + tzB + ")";
+
+}
+
+function updateAfromB() {
+  const tzA = document.getElementById('tzA').value;
+  const tzB = document.getElementById('tzB').value;
+  const dayB = parseInt(document.getElementById('dayB').value);
+  const timeB = parseInt(document.getElementById('timeB').value);
+
+  // Create DateTime from base (e.g., Sunday 00:00 UTC)
+  const minutes = timeB % 60;
+  const hours = Math.floor(timeB / 60);
+  
+  const dtB = luxon.DateTime.fromObject({
+    weekday: dayB === 0 ? 7 : dayB, // Luxon: 1 = Monday ... 7 = Sunday, so force the first slider value to be sunday
+    hour: hours,
+    minute: minutes
+  }, { zone: tzB });
+
+  // Convert to timezone A
+  const dtA = dtB.setZone(tzA);
+
+  // Update sliders for A
+  document.getElementById('dayA').value = (dtA.weekday % 7); // 0–6
+  document.getElementById('timeA').value = dtA.hour * 60 + dtA.minute;
+
+  // Update display
+  document.getElementById('displayDayA').innerText = dtA.toFormat(" cccc ");
+  document.getElementById('displayDayB').innerText = dtB.toFormat(" cccc ");
+
+  document.getElementById('timeAInput').value = `${String(dtA.hour).padStart(2, '0')}:${String(dtB.minute).padStart(2, '0')}`;
+  document.getElementById('timeBInput').value = `${String(dtB.hour).padStart(2, '0')}:${String(dtB.minute).padStart(2, '0')}`;
+
+  document.getElementById('displaytzA').innerText = " (" + tzA + ")";
+  document.getElementById('displaytzB').innerText = " (" + tzB + ")";
+}
+
+</script>
+</head>
+<body>
+<!-- Timezone A -->
+<div>
+  <h2>Timezone A</h2>
+  <label for="tzA">Select Timezone:</label>
+  <select id="tzA" oninput="updateBfromA()">
+  </select>
+
+  <label for="dayA">Day of Week:</label>
+  <input type="range" id="dayA" min="0" max="6" value="0" oninput="updateBfromA()">
+  
+  <label for="timeA">Time of Day:</label>
+  <input type="range" id="timeA" min="0" max="1439" value="0" oninput="updateBfromA()">
+
+  <p>
+    <input type="time" id="timeAInput">
+    <span id="displayDayA"> Sunday</span>
+    <span id="displaytzA"> (America/New_York)</span>
+  </p>
+</div>
+
+<!-- Timezone B -->
+<div>
+  <h2>Timezone B</h2>
+  <label for="tzB">Select Timezone:</label>
+  <select id="tzB" oninput="updateBfromA()">
+  </select>
+
+  <label for="dayB">Day of Week:</label>
+  <input type="range" id="dayB" min="0" max="6" value="0" oninput="updateAfromB()">
+  
+  <label for="timeB">Time of Day:</label>
+  <input type="range" id="timeB" min="0" max="1439" value="0" oninput="updateAfromB()">
+
+  <p>
+    <input type="time" id="timeBInput">
+    <span id="displayDayB"> Sunday</span>
+    <span id="displaytzB"> (America/New_York)</span>
+  </p>
+</div>
+
+<script>
+  const { DateTime } = luxon;
+
+  const timezones = Intl.supportedValuesOf('timeZone'); // works in modern browsers
+
+  const tzSelects = [document.getElementById('tzA'), document.getElementById('tzB')];
+
+  for (const select of tzSelects) {
+    for (const tz of timezones) {
+      const option = document.createElement('option');
+      option.value = tz;
+      option.textContent = tz;
+      select.appendChild(option);
+    }
+  }
+
+  //make it so the time inputs work update all other inputs as needed
+  document.getElementById('timeAInput').addEventListener('input', (e) => {
+  const [hours, minutes] = e.target.value.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes;
+  document.getElementById('timeA').value = totalMinutes;
+  updateBfromA();
+});
+
+  document.getElementById('timeBInput').addEventListener('input', (e) => {
+  const [hours, minutes] = e.target.value.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes;
+  document.getElementById('timeB').value = totalMinutes;
+  updateAfromB();
+});
+
+  document.getElementById('tzA').value = 'America/New_York';
+  document.getElementById('tzB').value = 'Asia/Tokyo';
+  updateBfromA();
+</script>
+
+</body></html>
