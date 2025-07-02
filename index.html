@@ -8,7 +8,7 @@ function updateBfromA() {
   const tzA = document.getElementById('tzA').value;
   const tzB = document.getElementById('tzB').value;
   const dayA = parseInt(document.getElementById('dayA').value);
-  const timeA = parseInt(document.getElementById('timeA').value);
+  const timeA = parseInt(document.getElementById('timeASlider').value); //input from the type=time input for Timezone A (id = "timeBInput") has its own method.
 
   // Create DateTime from base (e.g., Sunday 00:00 UTC)
   const minutes = timeA % 60;
@@ -25,7 +25,7 @@ function updateBfromA() {
 
   // Update sliders for B
   document.getElementById('dayB').value = (dtB.weekday % 7); // 0–6
-  document.getElementById('timeB').value = dtB.hour * 60 + dtB.minute;
+  document.getElementById('timeBSlider').value = dtB.hour * 60 + dtB.minute;
 
   // Update display
   document.getElementById('displayDayA').innerText = dtA.toFormat(" cccc ");
@@ -43,7 +43,7 @@ function updateAfromB() {
   const tzA = document.getElementById('tzA').value;
   const tzB = document.getElementById('tzB').value;
   const dayB = parseInt(document.getElementById('dayB').value);
-  const timeB = parseInt(document.getElementById('timeB').value);
+  const timeB = parseInt(document.getElementById('timeBSlider').value); //input from the type=time input for Timezone B (id = "timeBInput") has its own method.
 
   // Create DateTime from base (e.g., Sunday 00:00 UTC)
   const minutes = timeB % 60;
@@ -60,7 +60,7 @@ function updateAfromB() {
 
   // Update sliders for A
   document.getElementById('dayA').value = (dtA.weekday % 7); // 0–6
-  document.getElementById('timeA').value = dtA.hour * 60 + dtA.minute;
+  document.getElementById('timeASlider').value = dtA.hour * 60 + dtA.minute;
 
   // Update display
   document.getElementById('displayDayA').innerText = dtA.toFormat(" cccc ");
@@ -86,8 +86,8 @@ function updateAfromB() {
   <label for="dayA">Day of Week:</label>
   <input type="range" id="dayA" min="0" max="6" value="0" oninput="updateBfromA()">
   
-  <label for="timeA">Time of Day:</label>
-  <input type="range" id="timeA" min="0" max="1439" value="0" oninput="updateBfromA()">
+  <label for="timeASlider">Time of Day:</label>
+  <input type="range" id="timeASlider" min="0" max="1439" value="0" oninput="updateBfromA()">
 
   <p>
     <input type="time" id="timeAInput">
@@ -106,8 +106,8 @@ function updateAfromB() {
   <label for="dayB">Day of Week:</label>
   <input type="range" id="dayB" min="0" max="6" value="0" oninput="updateAfromB()">
   
-  <label for="timeB">Time of Day:</label>
-  <input type="range" id="timeB" min="0" max="1439" value="0" oninput="updateAfromB()">
+  <label for="timeBSlider">Time of Day:</label>
+  <input type="range" id="timeBSlider" min="0" max="1439" value="0" oninput="updateAfromB()">
 
   <p>
     <input type="time" id="timeBInput">
@@ -136,14 +136,14 @@ function updateAfromB() {
   document.getElementById('timeAInput').addEventListener('input', (e) => {
   const [hours, minutes] = e.target.value.split(':').map(Number);
   const totalMinutes = hours * 60 + minutes;
-  document.getElementById('timeA').value = totalMinutes;
+  document.getElementById('timeASlider').value = totalMinutes;
   updateBfromA();
 });
 
   document.getElementById('timeBInput').addEventListener('input', (e) => {
   const [hours, minutes] = e.target.value.split(':').map(Number);
   const totalMinutes = hours * 60 + minutes;
-  document.getElementById('timeB').value = totalMinutes;
+  document.getElementById('timeBSlider').value = totalMinutes;
   updateAfromB();
 });
 
