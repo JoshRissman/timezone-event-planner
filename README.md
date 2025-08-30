@@ -1,6 +1,6 @@
 # Timezone Event Planner
 
-This is a webpage I have made with the assistance of ChatGPT for the purpose of planning events across two seperate timezones.
+This is a webpage I have made with the assistance of ChatGPT for the purpose of planning events across two separate timezones.
 
 ## Webpage (Deployment) Link
 
